@@ -1,0 +1,1 @@
+npx create-react-app my-app --template @ui5/cra-template-webcomponents-reactLệnh này thúc đẩy create-react-app để tạo một Ứng dụng React với tất cả các phụ thuộc cần thiết cho Thành phần Web UI5 cho React.
