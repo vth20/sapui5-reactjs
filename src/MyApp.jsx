@@ -25,43 +25,49 @@ import './App.css';
 import '@ui5/webcomponents-icons/dist/line-chart.js';
 import '@ui5/webcomponents-icons/dist/horizontal-bar-chart.js';
 import '@ui5/webcomponents-icons/dist/add.js';
+import '@ui5/webcomponents-icons/dist/list.js';
+import '@ui5/webcomponents-icons/dist/table-view.js';
+
 import json from './dataset.json';
+import pic from './assets/images/profilePictureExample.png';
+import logo from './assets/images/reactLogo.png';
 const dataset = json.dataset;
-// const dataset = [
-// 	{
-// 		month: 'January',
-// 		data: 65,
-// 	},
-// 	{
-// 		month: 'February',
-// 		data: 59,
-// 	},
-// 	{
-// 		month: 'March',
-// 		data: 80,
-// 	},
-// 	{
-// 		month: 'April',
-// 		data: 81,
-// 	},
-// 	{
-// 		month: 'May',
-// 		data: 56,
-// 	},
-// 	{
-// 		month: 'June',
-// 		data: 55,
-// 	},
-// 	{
-// 		month: 'July',
-// 		data: 40,
-// 	},
-// ];
+
+const tableData = new Array(500).fill(null).map((_, index) => {
+	return {
+		name: `name${index}`,
+		age: Math.floor(Math.random() * 100),
+		friend: {
+			name: `friend.Name${index}`,
+			age: Math.floor(Math.random() * 100),
+		},
+	};
+});
+
+const tableColumns = [
+	{
+		Header: 'Name',
+		accessor: 'name', // String-based value accessors!
+	},
+	{
+		Header: 'Age',
+		accessor: 'age',
+	},
+	{
+		Header: 'Friend Name',
+		accessor: 'friend.name',
+	},
+	{
+		Header: 'Friend Age',
+		accessor: 'friend.age',
+	},
+];
 
 export function MyApp() {
 	const [toggleCharts, setToggleCharts] = useState(true);
 	const [toggleNameCharts, setToggleNameCharts] = useState('Line chart');
 	const [loading, setLoading] = useState(false);
+	const contentTitle = toggleCharts ? 'Line Chart' : 'Bar Chart';
 	const handleHeaderClick = () => {
 		setLoading(true);
 		setTimeout(() => {
@@ -73,53 +79,129 @@ export function MyApp() {
 	return (
 		<div>
 			<ShellBar
-				logo={<img src="" />}
+				logo={<img src={logo} />}
 				profile={
 					<Avatar>
-						<img src="" />
+						<img src={pic} />
 					</Avatar>
 				}
 				primaryTitle="My App"
 			>
 				<ShellBarItem icon="add" text="Add" />
 			</ShellBar>
-			<Card
-				header={
-					<CardHeader
-						titleText="Stock Prices"
-						interactive
-						subtitleText={`Click here to switch to ${toggleNameCharts}`}
-						onClick={handleHeaderClick}
-						avatar={
-							<Icon
-								name={
-									toggleCharts
-										? 'line-chart'
-										: 'horizontal-bar-chart'
-								}
-							/>
-						}
-					/>
-				}
-				style={{ width: '300px' }}
+			<FlexBox
+				justifyContent={FlexBoxJustifyContent.Center}
+				wrap={FlexBoxWrap.Wrap}
+				style={spacing.sapUiContentPadding}
 			>
-				<Text style={spacing.sapUiLargeMargin}>My root component</Text>
-				{toggleCharts ? (
-					<LineChart
-						dataset={dataset}
-						dimensions={[{ accessor: 'month' }]}
-						measures={[{ accessor: 'data', label: 'Stock Prince' }]}
-						loading={loading}
+				<Card
+					header={
+						<CardHeader
+							titleText="Stock Prices"
+							interactive
+							subtitleText={`Click here to switch to ${toggleNameCharts}`}
+							onClick={handleHeaderClick}
+							avatar={
+								<Icon
+									name={
+										toggleCharts
+											? 'line-chart'
+											: 'horizontal-bar-chart'
+									}
+								/>
+							}
+						/>
+					}
+					style={{ width: '300px', ...spacing.sapUiContentPadding }}
+				>
+					<Text style={spacing.sapUiLargeMargin}>{contentTitle}</Text>
+					{toggleCharts ? (
+						<LineChart
+							dataset={dataset}
+							dimensions={[{ accessor: 'month' }]}
+							measures={[
+								{ accessor: 'data', label: 'Stock Prince' },
+							]}
+							loading={loading}
+						/>
+					) : (
+						<BarChart
+							dataset={dataset}
+							dimensions={[{ accessor: 'month' }]}
+							measures={[
+								{ accessor: 'data', label: 'Stock Prince' },
+							]}
+							loading={loading}
+						/>
+					)}
+				</Card>
+				<Card
+					header={
+						<CardHeader
+							titleText="Process"
+							subtitleText="List"
+							avatar={<Icon name="list" />}
+						/>
+					}
+					style={{ width: '300px', ...spacing.sapUiContentPadding }}
+				>
+					<List>
+						<StandardListItem
+							additionalText="finished"
+							additionalTextState={ValueState.Success}
+						>
+							Activity 1
+						</StandardListItem>
+						<StandardListItem
+							additionalText="failed"
+							additionalTextState={ValueState.Error}
+						>
+							Activity 2
+						</StandardListItem>
+						<StandardListItem
+							additionalText="In process"
+							additionalTextState={ValueState.Warning}
+							style={{ height: '80px' }}
+						>
+							<Title level={TitleLevel.H5}>Activity 3</Title>
+							<ProgressIndicator
+								value={78}
+								valueState={ValueState.Success}
+							/>
+						</StandardListItem>
+						<StandardListItem
+							additionalText="In process"
+							additionalTextState={ValueState.Warning}
+							style={{ height: '80px' }}
+						>
+							<Title level={TitleLevel.H5}>Activity 4</Title>
+							<ProgressIndicator
+								value={5}
+								valueState={ValueState.Error}
+							/>
+						</StandardListItem>
+					</List>
+				</Card>
+				<Card
+					header={
+						<CardHeader
+							titleText="Analytical Table"
+							avatar={<Icon name="table-view" />}
+						/>
+					}
+					style={{
+						maxWidth: '900px',
+						...spacing.sapUiContentPadding,
+					}}
+				>
+					<AnalyticalTable
+						visibleRows={6}
+						rowHeight={30}
+						data={tableData}
+						columns={tableColumns}
 					/>
-				) : (
-					<BarChart
-						dataset={dataset}
-						dimensions={[{ accessor: 'month' }]}
-						measures={[{ accessor: 'data', label: 'Stock Prince' }]}
-						loading={loading}
-					/>
-				)}
-			</Card>
+				</Card>
+			</FlexBox>
 		</div>
 	);
 }
